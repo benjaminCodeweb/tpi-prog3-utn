@@ -8,6 +8,7 @@ type Props = {
 
 
 function NewProduct({productAdded}: Props) {
+
     const[nombre, setNombre] = useState('');
     const[describe, setDecribe] = useState('');
     const[precio, setPrecio] = useState('');
@@ -29,6 +30,15 @@ function NewProduct({productAdded}: Props) {
             }, {headers: {
                 Authorization: `Bearer ${token}`
             }});
+
+            productAdded();
+
+            setNombre('');
+            setDecribe('');
+            setPrecio('');
+            setCategoria('');
+            
+
 
             } catch (err) {
                 console.error('error: ',err)

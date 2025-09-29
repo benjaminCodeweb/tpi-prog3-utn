@@ -5,10 +5,20 @@ import mysql2 from 'mysql2/promise';
 import { db } from '../db/db.js';
 import bcrypt, { hash } from 'bcrypt';
 import jwt from 'jsonwebtoken'
+import nodemailer from 'nodemailer'
+import crypto from 'crypto'
 
 
 
 export const userRoutes = express.Router();
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: 'benjamincervigni@gmail.com', // tu Gmail
+    pass: 'myps anio jcem htqy', // tu contraseña o app password
+  },
+});
 
 
 userRoutes.post('/register', async(req,res) => {
@@ -32,17 +42,20 @@ userRoutes.post('/login', async(req,res) => {
     
         try {
         const [response]= await db.query(`SELECT username, email, hashPassword, rol  FROM users WHERE email = ?`, [email]);
-        const[rows] = await db.query(`SELECT * FROM users WHERE email = ?`, [email]);
+        
 
-        const user = rows[0];
+        const user = response[0];
 
-
-        const hashPasswords = response[0].hashPassword;
-
-        const match = await bcrypt.compare(password, hashPasswords);
-        if(!match) {
-            return response.status(400).json({success: false, message: 'Contrasena incorrecta'})
+         if(!user) {
+            return res.status(400).json({success: false, message: 'Usuario no  encontrado'})
         };
+        
+        const match = await bcrypt.compare(password, user.hashPassword);
+
+        if(!match) {
+            return res.status(400).json({success: false, message: 'Contrasena incorrecta'})
+        };
+       
 
         const secretKey = 'tiendafy';
         const userr ={
@@ -66,5 +79,80 @@ userRoutes.post('/login', async(req,res) => {
 
     }catch(err) {
         console.error('error interno del server', err);
+    }
+});
+
+userRoutes.post('/forgot-password', async(req,res) => {
+    const {email} = req.body;
+
+    try {
+      const[rows]= await db.query(`SELECT * FROM users WHERE email = ?`,[
+        email
+      ]);
+
+      const user = rows[0];
+
+      if(!user) {
+        res.status(400).json({message: 'Usuario no encontrado'});
+
+      }
+
+      const token = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 3600000);
+
+      await db.query(`UPDATE users SET reset_token = ?, reset_expires = ? WHERE email = ?`,[token, expiresAt, email]);
+      
+
+      const resetLink = `http://localhost:5173/reset-password/${token}`;
+
+
+
+    await transporter.sendMail({
+        from: 'benjamincervigni@gmail.com',
+        to: user.email,
+        subject: 'Restablecer contrasena',
+        html: `
+        h2>Hola!</h2>
+        <p>Has pedido restablecer tu contraseña.</p>
+        <p>Haz clic aquí para crear una nueva contraseña:</p>
+        <a href="${resetLink}">${resetLink}</a>
+        <p>Este enlace expira en 1 hora.</p>`
+        
+    });
+
+    res.json({success: true, message: 'Email enviado con instrucciones'});
+        
+
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).json({message: 'Error interno del servidor'})
+    }
+});
+
+userRoutes.post('/reset-password/:token', async(req,res) => {
+    const {token} = req.params;
+    const {password} = req.body;
+
+    try{
+        const[rows]= await db.query(`SELECT id, reset_expires FROM users WHERE reset_token = ?`, [token]);
+
+        const user = rows[0];
+
+        if (!user) return res.status(400).json({ message: 'Token inválido' });
+
+        if (new Date(user.resetExpires) < new Date()) {
+            return res.status(400).json({ message: 'Token expirado' });
+        }
+
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        await db.query(`UPDATE users SET hashPassword = ?, reset_expires = NULL, reset_token = NULL WHERE ID = ?`, [hashPassword, user.id]);
+
+        res.json({success:true, message:'Contrasena actualizada con exito'})
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).json({message: 'Error intenro del servidor'})
     }
 })

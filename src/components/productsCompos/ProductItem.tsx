@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import {type Product } from '../../types'
+
 
 
 type ProductItemProps = {
@@ -12,9 +12,10 @@ type ProductItemProps = {
   estado: string,
   showActions?: boolean; // ✅ opcional
   onCart?: () => void; // ✅ opcional
+  onDelete: () => void
 };
 
-function ProductItem({id, nombre, describe, precio,categoria,estado, showActions = true, onCart}: ProductItemProps) {
+function ProductItem({ nombre, describe, precio,categoria,estado, showActions = true, onCart, onDelete}: ProductItemProps) {
   const [disabledd, setDisabledd] = useState(false);
  useEffect(() => {
   
@@ -24,7 +25,9 @@ function ProductItem({id, nombre, describe, precio,categoria,estado, showActions
         setDisabledd(false)
       }
     
- }, [estado])
+ }, [estado]);
+
+ 
   
 
 
@@ -67,7 +70,7 @@ function ProductItem({id, nombre, describe, precio,categoria,estado, showActions
         <button className="px-3 py-1.5 text-sm bg-yellow-500 text-white rounded-lg">
           Editar
         </button>
-        <button className="px-3 py-1.5 text-sm bg-red-500 text-white rounded-lg">
+        <button onClick={onDelete} className="px-3 py-1.5 text-sm bg-red-500 text-white rounded-lg">
           Eliminar
         </button>
       </div>

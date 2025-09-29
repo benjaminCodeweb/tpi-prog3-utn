@@ -1,25 +1,56 @@
-import React, { useState } from 'react'
-import axios from 'axios';
+import React, { useState, type ReactNode } from 'react'
+import axios, { Axios } from 'axios';
 import { useNavigate } from 'react-router-dom';
 type Props = {
   onLogin: () => void;
 }
 
+type ErrorState = {
+  email?: string,
+  password?:string
+  general?:string
+}
+
 function Login({onLogin}: Props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState<ErrorState>({});
   
     const token = localStorage.getItem('token')
     const navigate = useNavigate();
 
+    const handleMissPassword = async() => {
+
+
+      navigate('/forgot-password');
+
+
+      }
+    
+
 
     const handleSubmit  = async(e: React.FormEvent) =>  {
         e.preventDefault();
+         let newErrors: ErrorState = {}; 
+
+            if(!email) {
+              newErrors.email = 'Email es obligatorio';
+              
+            }
+
+            if(!password) {
+              newErrors.password = 'Contrasena obligatoria'
+            }
 
 
         try {
             const res = await axios.post('http://localhost:3000/api/users/login', {email, password});
+         
+            setError({});
 
+
+
+         
             
 
             if(res.data.token){
@@ -34,11 +65,17 @@ function Login({onLogin}: Props) {
                  }
                  
             }
+            if(res.data !== token){
+              setError({general: 'error en el data'})
+
+            }
+            
            
 
             
-        }catch(err) {
-            console.error(err);
+        }catch(err:any) {
+            
+           setError({general: 'error inesperado'})
         }
         
     };
@@ -69,6 +106,7 @@ function Login({onLogin}: Props) {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
+        {error.email && <p>{error.email}</p>}
       </div>
 
       <div>
@@ -82,6 +120,7 @@ function Login({onLogin}: Props) {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
+         {error.password && <p>{error.password}</p>}
       </div>
 
       <button
@@ -90,11 +129,13 @@ function Login({onLogin}: Props) {
       >
         Iniciar sesión
       </button>
+       
+  
     </form>
 
     {/* Links extras */}
     <div className="mt-6 text-center text-sm">
-      <a  className="text-blue-600 hover:underline">
+      <a  onClick={handleMissPassword} className="text-blue-600 hover:underline">
         ¿Olvidaste tu contraseña?
       </a>
     
@@ -103,6 +144,7 @@ function Login({onLogin}: Props) {
         </button>
       
     </div>
+   
   </div>
 </div>
 

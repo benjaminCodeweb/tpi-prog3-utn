@@ -77,4 +77,67 @@ productRoutes.post('/comprar', async(req,res) => {
 
 
     }
+});
+
+productRoutes.get('/stats', async(req,res) => {
+    try {
+
+        const userId = req.user.id;
+
+        const[totalProductos]= await db.query(`SELECT COUNT(*) AS total FROM productos WHERE user_id = ?`,
+            [userId]
+        );
+
+        const[totalVendidos] = await db.query(`SELECT COUNT(*) AS vendidos FROM productos WHERE user_id = ? AND estado = 'Vendido'`,[userId]);
+
+        const[ingresos] = await db.query(`SELECT COALESCE(SUM(precio), 0)AS total_ingresos FROM productos WHERE user_id = ? AND estado = 'Vendido'`,[
+            userId
+        ])
+
+        res.json({
+           productos: totalProductos[0].total,
+           totalVendido: totalVendidos[0].vendidos,
+           ingreso:  ingresos[0].total_ingresos
+        });
+    }catch(err){
+        console.error(err);
+    }
+    
+});
+
+productRoutes.delete('/:id', async(req,res) => {
+    const {id} = req.params;
+    const userId = req.user.id
+
+    const[rows] = await db.query(`
+        DELETE FROM productos WHERE id = ? AND user_id = ?`, [id, userId]);
+
+    if(rows.affectedRows === 0) {
+        return res.status(404).json({error: 'Error al encontrar el producto'});
+    }
+
+
+
+        res.json({message: 'Producto borrado correctamente', deleteId: id});
+        
+});
+
+productRoutes.get('/stats-sellers', async(req,res)=> {
+    const userId = req.user.id;
+
+
+    try {
+
+
+        const[totalComprado] = await db.query(`SELECT COUNT(*) FROM ordenes WHERE user_id = ?`,[userId]);
+
+        const[totalGasto] = await db.query(`SELEC SUM(total) FROM ordenes WHERE user_id = ?`,[userId]);
+
+        res.json({
+            comprado: totalComprado[0],
+            totalGastado: totalGasto[0]
+        })
+    }catch(err){
+        console.error(err);
+    }
 })

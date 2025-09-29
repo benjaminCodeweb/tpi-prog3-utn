@@ -10,6 +10,9 @@ import Register from './components/users/Register'
 import Protected from './components/userSecurity/Protected'
 import Landing from './components/productsCompos/Landing'
 import Shop from './components/sellersCompos/Shop'
+import Dashboard from './components/productsCompos/Dashboard'
+import ForgotPassword from './components/userSecurity/ForgotPassword'
+import ResetPassword from './components/userSecurity/ResetPassword'
 
 function App() {
   
@@ -21,12 +24,15 @@ function App() {
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
   const userId = localStorage.getItem('userId');
+  const [deleteToast, setDeleteToast]= useState(false);
+
   
   const handleLogin = () => {
      setIsLogin(true);
 
   
   }
+  
   const handleLogout = () => {
     setIsLogin(false);
     localStorage.removeItem('token');
@@ -51,6 +57,29 @@ function App() {
       }catch(err){
         console.error(err);
       }
+  };
+
+  const deletePruduct =async (id: number) => {
+    try {
+
+      const res = await axios.delete(`http://localhost:3000/api/products/${id}`, {headers: {
+        Authorization: `Bearer ${token}`
+      }
+
+      
+    })
+
+    
+    await fetchProducts();
+    setDeleteToast(!deleteToast);
+
+    setTimeout(() => setDeleteToast(false), 3000);
+
+
+    }catch(err){
+      console.error(err);
+
+    }
   }
 
   
@@ -68,7 +97,11 @@ function App() {
     }
     useEffect(() =>{
       fetchProducts();
-    },[])
+    },[]);
+
+    const handleStats = () => {
+      navigate('/stats')
+    }
 
   return (
  
@@ -77,15 +110,22 @@ function App() {
          <Route path='/' element={<Landing />} />
         <Route path='/index' element= {
           <Protected isLogin={isLogin}>
-          <Index  onRefresh={fetchProducts} onLogout={handleLogout} products={products} />
+          <Index  onDeleteToast={deleteToast} onDelete={deletePruduct} onStats={handleStats} onRefresh={fetchProducts} onLogout={handleLogout} products={products} />
+          
           </Protected>}  />
             <Route path='/shop' element= {
           <Protected isLogin={isLogin}>
           <Shop onLogout={handleLogout} cart={cart} onBuy={handleBuy} onAddCart={handleAddCart} />
           </Protected>}  />
 
+          
+          <Route path='/stats' element={ <Protected isLogin={isLogin}> <Dashboard /> </Protected>  }  />
+         
+
           <Route path='/login' element={<Login onLogin={handleLogin} /> }  />
           <Route path='/register' element={<Register/>} />
+          <Route path='/forgot-password' element={<ForgotPassword/>} />
+          <Route path='/reset-password/:token' element={<ResetPassword/>} />
       </Routes>
       
   
