@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { type Product } from "../../types";
 import axios from 'axios';
 import ProductItem from "../productsCompos/ProductItem";
+import { useNavigate } from "react-router-dom";
 type ShopProps = {
   onAddCart: (product: Product) => void;
   cart: Product[];
@@ -13,6 +14,7 @@ function Shop({onAddCart, cart, onBuy, onLogout}: ShopProps){
     const [products, setProducts] = useState<Product[]>([]);
     const[cartVisible, setCartVisible] = useState(false);
     const token = localStorage.getItem('token');
+    const navigate = useNavigate();
     const fetchProducts = async() => {
       try {
         const response = await axios.get(`http://localhost:3000/api/products/general`, {
@@ -40,7 +42,12 @@ function Shop({onAddCart, cart, onBuy, onLogout}: ShopProps){
     const handleLogout = () => {
 
       onLogout();
+    };
+
+    const handleStats = () => {
+      navigate('/stats-bullers');
     }
+    
 
     return (
    <div className="bg-gray-50 min-h-screen flex flex-col">
@@ -58,12 +65,20 @@ function Shop({onAddCart, cart, onBuy, onLogout}: ShopProps){
   >
     🛒 Carrito ({cart.length})
   </button>
+   <button
+    onClick={handleStats}
+    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg  font-semibold"
+  >
+    Stats 
+  </button>
+
       <button
         onClick={handleLogout}
         className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-md transition"
       >
         Cerrar sesión
       </button>
+
     </nav>
   </header>
 

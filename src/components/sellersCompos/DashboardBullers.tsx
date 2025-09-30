@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import axios from 'axios'
 type StatsBullers = {
     comprado: number,
-    totalComprado: number,
     totalGastado:number
 }
 function DashboardSellers(){
@@ -40,10 +39,7 @@ return(
           <p className="text-gray-600">Productos Comprados en el mes</p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-md text-center">
-          <h2 className="text-2xl font-bold text-green-600">{stats?.totalComprado}</h2>
-          <p className="text-gray-600">Productos Comprados</p>
-        </div>
+        
 
         <div className="bg-white p-6 rounded-xl shadow-md text-center">
           <h2 className="text-2xl font-bold text-blue-600">${stats?.totalGastado}</h2>

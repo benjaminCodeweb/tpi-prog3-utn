@@ -22,8 +22,12 @@ const ThemeContextProvider  = ({children}: Props) => {
     const [theme, setTheme] = useState(storedTheme)
 
     useEffect(() => {
-        document.documentElement.setAttribute('data-bs-theme', theme);
-    }, [theme])
+  if (theme === DARK_THEME) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+}, [theme]);
 
     const toggleTheme = () => {
         if(theme === LIGHT_THEME) {

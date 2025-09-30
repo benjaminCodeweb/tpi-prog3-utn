@@ -13,6 +13,7 @@ import Shop from './components/sellersCompos/Shop'
 import Dashboard from './components/productsCompos/Dashboard'
 import ForgotPassword from './components/userSecurity/ForgotPassword'
 import ResetPassword from './components/userSecurity/ResetPassword'
+import DashboardSellers from './components/sellersCompos/DashboardBullers'
 
 function App() {
   
@@ -120,6 +121,7 @@ function App() {
 
           
           <Route path='/stats' element={ <Protected isLogin={isLogin}> <Dashboard /> </Protected>  }  />
+          <Route path='/stats-bullers' element={ <Protected isLogin={isLogin}> <DashboardSellers /> </Protected>  }  />
          
 
           <Route path='/login' element={<Login onLogin={handleLogin} /> }  />

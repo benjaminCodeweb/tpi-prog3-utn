@@ -41,7 +41,7 @@ userRoutes.post('/login', async(req,res) => {
 
     
         try {
-        const [response]= await db.query(`SELECT username, email, hashPassword, rol  FROM users WHERE email = ?`, [email]);
+        const [response]= await db.query(`SELECT id, username, email, hashPassword, rol  FROM users WHERE email = ?`, [email]);
         
 
         const user = response[0];
@@ -65,7 +65,7 @@ userRoutes.post('/login', async(req,res) => {
             rol: user.rol
         }
 
-        const token = jwt.sign(user, secretKey, {expiresIn: '1h'});
+        const token = jwt.sign(userr, secretKey, {expiresIn: '1h'});
 
 
         return res.json({

@@ -129,13 +129,13 @@ productRoutes.get('/stats-sellers', async(req,res)=> {
     try {
 
 
-        const[totalComprado] = await db.query(`SELECT COUNT(*) FROM ordenes WHERE user_id = ?`,[userId]);
+        const[totalComprado] = await db.query(`SELECT COUNT(*) AS total_comprado FROM ordenes WHERE user_id = ?`,[userId]);
 
-        const[totalGasto] = await db.query(`SELEC SUM(total) FROM ordenes WHERE user_id = ?`,[userId]);
+        const[totalGasto] = await db.query(`SELECT COALESCE(SUM(total),0) as total_gastado FROM ordenes WHERE user_id = ?`,[userId]);
 
         res.json({
-            comprado: totalComprado[0],
-            totalGastado: totalGasto[0]
+            comprado: totalComprado[0].total_comprado,
+            totalGastado: totalGasto[0].total_gastado
         })
     }catch(err){
         console.error(err);
