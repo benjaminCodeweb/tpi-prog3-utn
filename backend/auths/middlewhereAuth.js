@@ -24,4 +24,15 @@ export function verifyToken(req,res,next) {
     }catch(error){
         return res.status(403).json({message: 'No posee permisos correctos'});
     }
+};
+
+export function verifyAdmin(req,res,next) {
+    verifyToken(req,res, () => {
+        const {rol} = req.user;
+        if(rol === 'admin') {
+            next();
+        } else {
+            return res.status(403).json({message: 'Acceso denegado, requiere rol administrador'})
+        }
+    }) 
 }

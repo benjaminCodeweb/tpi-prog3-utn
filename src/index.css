@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+
+:root {
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --badge-bg: #eff6ff;
+  --danger: #ef4444;
+  --success: #10b981;
+  --shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+  --border: rgba(0, 0, 0, 0.08);
+  --radius: 10px;
+  --transition: 0.25s ease;
+}
+
+/* 🌙 Modo oscuro estilo YouTube */
+.dark {
+  --bg: #0f0f0f;
+  --card: #181818;
+  --text: #f1f1f1;
+  --muted: #aaaaaa;
+  --accent: #3b82f6;
+  --badge-bg: #272727;
+  --danger: #f87171;
+  --success: #22c55e;
+  --shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+/* Fondo general */
+html,
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* Tarjetas */
+.card,
+.bg-white {
+  background-color: var(--card) !important;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  transition: background-color var(--transition), transform 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Cabecera */
+header {
+  background-color: var(--card) !important;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+/* Footer */
+footer {
+  background-color: var(--card);
+  border-top: 1px solid var(--border);
+}
+
+/* Botones */
+.btn-primary {
+  background-color: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  transition: background-color var(--transition), transform 0.2s ease;
+}
+.btn-primary:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: #fff;
+  border-radius: 8px;
+  transition: background-color var(--transition), transform 0.2s ease;
+}
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+/* Badges */
+.badge,
+.tag {
+  background-color: var(--badge-bg);
+  color: var(--text);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+}
+
+/* Texto */
+.text-gray-800 {
+  color: var(--text) ;
+}
+.text-gray-500,
+.text-gray-400 {
+  color: var(--muted) ;
+}
+
+/* Bordes */
+.border-gray-100 {
+  border-color: var(--border) !important;
+}
+
+/* Transiciones */
+.transition-theme {
+  transition: background-color var(--transition), color var(--transition),
+    border-color var(--transition), box-shadow var(--transition);
+}

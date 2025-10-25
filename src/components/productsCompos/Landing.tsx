@@ -1,4 +1,8 @@
 import { useNavigate } from "react-router-dom";
+import jordan from '../assetsComponents/assets/jordan.jpg';
+import adidas from '../assetsComponents/assets/casacaadidas.jpg';
+import nike from '../assetsComponents/assets/casacanike.jpg';
+
 
 export default function Landing() {
 
@@ -17,7 +21,7 @@ export default function Landing() {
           <a href="#productos" className="hover:text-blue-600">Productos</a>
           <a href="#contacto" className="hover:text-blue-600">Contacto</a>
         </nav>
-        <button onClick={handleLogin} className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+        <button onClick={handleLogin} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
           Iniciar sesión
         </button>
       </header>
@@ -68,25 +72,49 @@ export default function Landing() {
       {/* Productos */}
       <section id="productos" className="bg-gray-50 py-20 px-6">
         <h3 className="text-3xl font-bold text-center mb-12">Productos destacados</h3>
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {[1, 2, 3].map((p) => (
-            <div
-              key={p}
-              className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1606813902913-8ac6a5cfb7d5"
-                alt="Producto"
-                className="rounded-lg mb-4 h-40 w-full object-cover"
-              />
-              <h4 className="font-semibold text-lg mb-2">Producto {p}</h4>
-              <p className="text-gray-600 mb-4">$99.99</p>
-              <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
-                Agregar al carrito
-              </button>
-            </div>
-          ))}
-        </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {/* Producto 1 */}
+      <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
+        <img
+          src={jordan}
+          alt="Jordan"
+          className="rounded-lg mb-4 h-40 w-full object-cover"
+        />
+        <h4 className="font-semibold text-lg mb-2">Zapatillas Jordan</h4>
+        <p className="text-gray-600 mb-4">$120.00</p>
+        <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+          Agregar al carrito
+        </button>
+      </div>
+
+      {/* Producto 2 */}
+      <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
+        <img
+          src={nike}
+          alt="Nike"
+          className="rounded-lg mb-4 h-40 w-full object-cover"
+        />
+        <h4 className="font-semibold text-lg mb-2">Remera Nike</h4>
+        <p className="text-gray-600 mb-4">$45.00</p>
+        <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+          Agregar al carrito
+        </button>
+      </div>
+
+      {/* Producto 3 */}
+      <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
+        <img
+          src={adidas}
+          alt="Adidas"
+          className="rounded-lg mb-4 h-40 w-full object-cover"
+        />
+        <h4 className="font-semibold text-lg mb-2">Buzo Adidas</h4>
+        <p className="text-gray-600 mb-4">$65.00</p>
+        <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+          Agregar al carrito
+        </button>
+      </div>
+    </div>
       </section>
 
       {/* Footer */}

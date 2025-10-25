@@ -7,6 +7,8 @@ import bcrypt, { hash } from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer'
 import crypto from 'crypto'
+import { verifyToken } from '../auths/middlewhereAuth.js';
+import { middlewhereBan } from '../auths/middlewhereBan.js';
 
 
 
@@ -28,20 +30,46 @@ userRoutes.post('/register', async(req,res) => {
         const saltRounds = await bcrypt.genSalt(10);
         const hashPassword = await  bcrypt.hash(password, saltRounds);
 
-        const res = await db.query(`INSERT INTO users (username, email, hashPassword, rol) VALUES(?, ?, ?, ?)`,
+        const response = await db.query(`INSERT INTO users (username, email, hashPassword, rol) VALUES(?, ?, ?, ?)`,
             [username, email, hashPassword, rol]
-        )
+        );
+
+        const usernameDb = await db.query(`SELECT username FROM users`);
+        const emailDb = await db.query(`SELECT email FROM users`);
+
+        if(usernameDb === username) {
+            return res.status(400).json({success: false, message: 'Nombre de usuario existente'})
+        };
+
+        if(emailDb === email) {
+            return res.status(400).json({success: false, message: 'Email existente'})
+        };
+
+        return res.json({
+            success: true,
+            username,
+            email,
+            hashPassword,
+            rol
+        })
     }catch(err) {
         console.error('error al guardar en la bbdd', err);
+        if(err.sqlMessage.includes('users.username')) {
+            return res.status(400).json({success: false, message: 'Usuario ya existente'})
+        }
+
+         console.error('error al guardar en la bbdd', err);
+        if(err.sqlMessage.includes('users.email')) {
+            return res.status(400).json({success: false, message: 'Email ya existente'})
+        }
+    
     }
 });
 
 userRoutes.post('/login', async(req,res) => {
     const {email, password} = req.body;
-
-    
         try {
-        const [response]= await db.query(`SELECT id, username, email, hashPassword, rol  FROM users WHERE email = ?`, [email]);
+        const [response]= await db.query(`SELECT *  FROM users WHERE email = ?`, [email]);
         
 
         const user = response[0];
@@ -55,9 +83,24 @@ userRoutes.post('/login', async(req,res) => {
         if(!match) {
             return res.status(400).json({success: false, message: 'Contrasena incorrecta'})
         };
+
+        if(user.is_banned) {
+            const fechaBan = new Date(user.ban_fecha);
+  const fechaFormateada = fechaBan.toLocaleString('es-AR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit'
+});
+
+
+            return res.status(403).json({message: `Usted ha sido baneado hasta la fecha ${fechaFormateada}`})
+        }
        
 
         const secretKey = 'tiendafy';
+
         const userr ={
             id: user.id, 
             username: user.username, 
@@ -79,6 +122,7 @@ userRoutes.post('/login', async(req,res) => {
 
     }catch(err) {
         console.error('error interno del server', err);
+        return res.status(500).json({message: 'Error interno del servidor'})
     }
 });
 
@@ -155,4 +199,10 @@ userRoutes.post('/reset-password/:token', async(req,res) => {
         console.error(err);
         return res.status(500).json({message: 'Error intenro del servidor'})
     }
+});
+
+userRoutes.get('/profiles', verifyToken, middlewhereBan, async(req,res)=>{
+    const userId = req.user.id;
+
+    res.json({id: userId});
 })

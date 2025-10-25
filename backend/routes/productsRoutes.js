@@ -3,19 +3,36 @@ import express from 'express';
 import axios from 'axios';
 import mysql2 from 'mysql2';
 import { db } from '../db/db.js';
-
+import multer from 'multer';
 
 export const productRoutes = express.Router();
 
+const storage = multer.diskStorage({
+    destination: function(req,file,cb) {
+        cb(null, 'uploads/');
 
-productRoutes.post('/', async(req,res) => {
+    },
+    filename: function  (req,file,cb) {
+        const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9 );
+        const ext = file.originalname.split('.').pop();
+        cb(null, `${file.fieldname}-${uniqueSuffix}.${ext}`)
+    }
+});
+
+const upload = multer({storage:storage})
+
+
+productRoutes.post('/', upload.single('imagen'), async(req,res) => {
     const {nombre, describe, precio, categoria} = req.body;
+    const imagenPath = req.file? `/uploads/${req.file.filename}`.replace(/\\/g, '/') : null;
+
+
     const userId = req.user.id
 
     try {
        const [response]=  await db.query(
-            `INSERT INTO productos (nombre, descrip, precio, user_id, categoria) VALUES(?, ?, ?, ?, ?)  `,
-            [nombre, describe, precio, userId, categoria, ]
+            `INSERT INTO productos (nombre, descrip, precio, user_id, categoria, imagen) VALUES(?, ?, ?, ?, ?, ?)  `,
+            [nombre, describe, precio, userId, categoria, imagenPath ]
         );
         const data = response[0];
         
@@ -66,12 +83,19 @@ productRoutes.post('/comprar', async(req,res) => {
     const {products} = req.body;
 
     const productIds = products.map(p => p.id);
-
+    const userId = req.user.id;
+    
    
     try {
         const[result] = await db.query(`UPDATE productos SET estado = 'Vendido' WHERE id IN (?)`, [productIds]);
 
-        res.json({updated: result.affectedRows})
+        await db.query(`UPDATE productos set vendidos = vendidos + 1 WHERE id IN (?)`,[productIds]);
+
+        const total = products.reduce((sum, p) => sum + p.precio, 0);
+
+        await db.query(`INSERT INTO ordenes (user_id, total, cantidad_productos) VALUES (?, ?, ?)`,[userId, total, products.length]);
+
+        res.json({message: 'Compra procesada correctamente'})
     }catch(err){
         console.error('error intenro del servidor', err);
 
@@ -94,8 +118,12 @@ productRoutes.get('/stats', async(req,res) => {
             userId
         ])
 
+        const [topVendidos] = await db.query('SELECT *  FROM productos ORDER BY vendidos DESC LIMIT 5');
+
+
         res.json({
            productos: totalProductos[0].total,
+           topVendidos,
            totalVendido: totalVendidos[0].vendidos,
            ingreso:  ingresos[0].total_ingresos
         });
@@ -107,7 +135,7 @@ productRoutes.get('/stats', async(req,res) => {
 
 productRoutes.delete('/:id', async(req,res) => {
     const {id} = req.params;
-    const userId = req.user.id
+    const userId = req.user.id;
 
     const[rows] = await db.query(`
         DELETE FROM productos WHERE id = ? AND user_id = ?`, [id, userId]);
@@ -132,7 +160,7 @@ productRoutes.get('/stats-sellers', async(req,res)=> {
         const[totalComprado] = await db.query(`SELECT COUNT(*) AS total_comprado FROM ordenes WHERE user_id = ?`,[userId]);
 
         const[totalGasto] = await db.query(`SELECT COALESCE(SUM(total),0) as total_gastado FROM ordenes WHERE user_id = ?`,[userId]);
-
+        const[topProducto] = await db.query(`SELECT * FROM productos WHERE id = ?`, [userId])
         res.json({
             comprado: totalComprado[0].total_comprado,
             totalGastado: totalGasto[0].total_gastado
@@ -140,4 +168,23 @@ productRoutes.get('/stats-sellers', async(req,res)=> {
     }catch(err){
         console.error(err);
     }
+});
+
+productRoutes.put('/:id', async(req,res) => {
+    const {id} = req.params;
+    const {nombre, descrip, precio} = req.body;
+    const userId = req.user.id;
+
+    try{
+
+        const response = await db.query(`UPDATE productos SET nombre = ?, descrip = ?, precio = ? WHERE id = ? AND user_id = ? `,[nombre, descrip, precio, id, userId]);
+
+
+        return res.json({
+            response
+        })
+    }catch(err){
+        console.error(err)
+    }
+
 })
