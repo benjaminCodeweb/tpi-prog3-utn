@@ -3,19 +3,19 @@ import axios from "axios";
 import { themeContext } from "../../services/ThemeProvider";
 
 type Props = {
-  isOpen:boolean;
+  isOpen: boolean;
   onClose: () => void;
 }
 
-function ForgotPassword({isOpen, onClose}: Props) {
+function ForgotPassword({ isOpen, onClose }: Props) {
 
-  if(!isOpen) {
+  if (!isOpen) {
     return null;
   }
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const {theme} = useContext(themeContext)
+  const { theme } = useContext(themeContext)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

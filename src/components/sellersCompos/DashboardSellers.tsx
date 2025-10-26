@@ -3,47 +3,46 @@ import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 import { themeContext } from "../../services/ThemeProvider";
 type StatsBullers = {
-    comprado: number,
-    totalGastado:number
+  comprado: number,
+  totalGastado: number
 }
-function DashboardSellers(){
-    const [stats, setStats]= useState<StatsBullers | null>(null);
-    const token = localStorage.getItem('token');
-    const navigate = useNavigate();
-    const {theme} = useContext(themeContext);
+function DashboardSellers() {
+  const [stats, setStats] = useState<StatsBullers | null>(null);
+  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
+  const { theme } = useContext(themeContext);
 
 
-    const fetchStats = async() => {
-        try {
-            const res = await axios.get('http://localhost:3000/api/products/stats-sellers', {
-                  
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-            });
-            setStats(res.data);
+  const fetchStats = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/api/products/stats-sellers', {
 
-    }catch(err){
-        console.error(err);
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setStats(res.data);
+
+    } catch (err) {
+      console.error(err);
     };
 
 
-}
+  }
 
-useEffect(() => {
+  useEffect(() => {
     fetchStats();
-},[]);
+  }, []);
 
-const handleShop = () => {
-  navigate('/shop')
-}
+  const handleShop = () => {
+    navigate('/shop')
+  }
 
 
-return (
+  return (
     <div
-      className={`min-h-screen flex flex-col transition-theme duration-300 ${
-        theme === "dark" ? "dark" : ""
-      }`}
+      className={`min-h-screen flex flex-col transition-theme duration-300 ${theme === "dark" ? "dark" : ""
+        }`}
       style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
     >
       {/* 🔹 Navbar */}

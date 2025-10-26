@@ -10,64 +10,64 @@ type Props = {
 }
 
 
-function Login({onLogin}: Props) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const {theme} = useContext(themeContext)
+function Login({ onLogin }: Props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const { theme } = useContext(themeContext)
 
-    const token = localStorage.getItem('token')
-  
-    const navigate = useNavigate();
+  const token = localStorage.getItem('token')
 
-    const handleMissPassword = async() => {
+  const navigate = useNavigate();
 
-      setShowModal(!showModal)
+  const handleMissPassword = async () => {
 
-      }
+    setShowModal(!showModal)
 
-       const handleRegister = () => {
-        navigate('/register')
-      }
-    
-    const handleSubmit  = async(e: React.FormEvent) =>  {
-        e.preventDefault();
-        try {
-            const res = await axios.post('http://localhost:3000/api/users/login', {email, password});
+  }
 
-            if(res.data.token){
+  const handleRegister = () => {
+    navigate('/register')
+  }
 
-                localStorage.setItem('token', res.data.token);
-                localStorage.setItem('userId', res.data.userr.id);
-                 onLogin();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:3000/api/users/login', { email, password });
 
-                 if(res.data.userr.rol === 'Vendedor') {
-                   navigate('/index');
-                   
-                 } else if(res.data.userr.rol === 'Comprador'){
-                  navigate('/shop')
-                 } else if(res.data.userr.rol === 'Admin'){
-                  navigate('/admin')}
-                 
-            }
+      if (res.data.token) {
 
-        } catch(err:any) {
-          
-          if(axios.isAxiosError(err) && err.response) {
-            setError(err.response.data.message )
-          } 
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('userId', res.data.userr.id);
+        onLogin();
+
+        if (res.data.userr.rol === 'Vendedor') {
+          navigate('/index');
+
+        } else if (res.data.userr.rol === 'Comprador') {
+          navigate('/shop')
+        } else if (res.data.userr.rol === 'Admin') {
+          navigate('/admin')
         }
-    };
+
+      }
+
+    } catch (err: any) {
+
+      if (axios.isAxiosError(err) && err.response) {
+        setError(err.response.data.message)
+      }
+    }
+  };
 
 
-   
-    
-   return (
+
+
+  return (
     <div
-      className={`min-h-screen flex items-center justify-center px-4 transition-theme duration-300 ${
-        theme === "dark" ? "dark" : ""
-      }`}
+      className={`min-h-screen flex items-center justify-center px-4 transition-theme duration-300 ${theme === "dark" ? "dark" : ""
+        }`}
       style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
     >
       <div

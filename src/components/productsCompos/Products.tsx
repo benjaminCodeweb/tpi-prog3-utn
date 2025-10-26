@@ -1,35 +1,34 @@
 import { useContext, useState } from "react";
-import {type  Product } from "../../types";
-import  ProductItem from"./ProductItem";
-import {motion, AnimatePresence} from 'framer-motion'
+import { type Product } from "../../types";
+import ProductItem from "./ProductItem";
+import { motion, AnimatePresence } from 'framer-motion'
 import { themeContext } from "../../services/ThemeProvider";
 
 
 export type ProductsProps = {
-    products: Product[];
-    onDelete: (id:number) => void;
-   
-    onStartEdit: (product: Product) => void;
-    
-   
-}
-function Products({products, onDelete, onStartEdit}: ProductsProps) {
-    const [search] = useState<string>('');
-    const {theme} = useContext(themeContext)
+  products: Product[];
+  onDelete: (id: number) => void;
 
-   
-    const filtredProducts = 
+  onStartEdit: (product: Product) => void;
+
+
+}
+function Products({ products, onDelete, onStartEdit }: ProductsProps) {
+  const [search] = useState<string>('');
+  const { theme } = useContext(themeContext)
+
+
+  const filtredProducts =
     search.length > 0
-    ? products.filter((p) => 
+      ? products.filter((p) =>
         p.nombre.toLowerCase().includes(search.toLowerCase()
         ))
 
-    : products;
-    return (
+      : products;
+  return (
     <div
-      className={`px-6 py-10 transition-theme duration-300 ${
-        theme === "dark" ? "dark" : ""
-      }`}
+      className={`px-6 py-10 transition-theme duration-300 ${theme === "dark" ? "dark" : ""
+        }`}
       style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
     >
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

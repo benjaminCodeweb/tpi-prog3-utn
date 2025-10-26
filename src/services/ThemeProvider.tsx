@@ -7,7 +7,7 @@ type ThemeContextType = {
 
 export const themeContext = createContext<ThemeContextType>({
   theme: 'light',
-  toggleTheme: () => {},
+  toggleTheme: () => { },
 });
 type Props = {
   children: ReactNode;
@@ -26,7 +26,7 @@ export const ThemeContextProvider = ({ children }: Props) => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
-  
+
 
   const toggleTheme = () =>
     setTheme((prev) => (prev === LIGHT_THEME ? DARK_THEME : LIGHT_THEME));

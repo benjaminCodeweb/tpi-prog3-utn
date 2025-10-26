@@ -6,11 +6,11 @@ import nike from '../assetsComponents/assets/casacanike.jpg';
 
 export default function Landing() {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleLogin = () => {
-        navigate('/login')
-    }
+  const handleLogin = () => {
+    navigate('/login')
+  }
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
       {/* Header */}
@@ -33,7 +33,7 @@ export default function Landing() {
             Bienvenido a <span className="text-blue-600">Tiendafy</span>
           </h2>
           <p className="text-lg text-gray-600">
-            Encuentra los mejores productos al mejor precio.  
+            Encuentra los mejores productos al mejor precio.
             Tu tienda online confiable y rápida 🚀
           </p>
           <div className="flex gap-4 justify-center md:justify-start">
@@ -72,49 +72,49 @@ export default function Landing() {
       {/* Productos */}
       <section id="productos" className="bg-gray-50 py-20 px-6">
         <h3 className="text-3xl font-bold text-center mb-12">Productos destacados</h3>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-      {/* Producto 1 */}
-      <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
-        <img
-          src={jordan}
-          alt="Jordan"
-          className="rounded-lg mb-4 h-40 w-full object-cover"
-        />
-        <h4 className="font-semibold text-lg mb-2">Zapatillas Jordan</h4>
-        <p className="text-gray-600 mb-4">$120.00</p>
-        <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
-          Agregar al carrito
-        </button>
-      </div>
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {/* Producto 1 */}
+          <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
+            <img
+              src={jordan}
+              alt="Jordan"
+              className="rounded-lg mb-4 h-40 w-full object-cover"
+            />
+            <h4 className="font-semibold text-lg mb-2">Zapatillas Jordan</h4>
+            <p className="text-gray-600 mb-4">$120.00</p>
+            <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+              Agregar al carrito
+            </button>
+          </div>
 
-      {/* Producto 2 */}
-      <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
-        <img
-          src={nike}
-          alt="Nike"
-          className="rounded-lg mb-4 h-40 w-full object-cover"
-        />
-        <h4 className="font-semibold text-lg mb-2">Remera Nike</h4>
-        <p className="text-gray-600 mb-4">$45.00</p>
-        <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
-          Agregar al carrito
-        </button>
-      </div>
+          {/* Producto 2 */}
+          <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
+            <img
+              src={nike}
+              alt="Nike"
+              className="rounded-lg mb-4 h-40 w-full object-cover"
+            />
+            <h4 className="font-semibold text-lg mb-2">Remera Nike</h4>
+            <p className="text-gray-600 mb-4">$45.00</p>
+            <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+              Agregar al carrito
+            </button>
+          </div>
 
-      {/* Producto 3 */}
-      <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
-        <img
-          src={adidas}
-          alt="Adidas"
-          className="rounded-lg mb-4 h-40 w-full object-cover"
-        />
-        <h4 className="font-semibold text-lg mb-2">Buzo Adidas</h4>
-        <p className="text-gray-600 mb-4">$65.00</p>
-        <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
-          Agregar al carrito
-        </button>
-      </div>
-    </div>
+          {/* Producto 3 */}
+          <div className="p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition">
+            <img
+              src={adidas}
+              alt="Adidas"
+              className="rounded-lg mb-4 h-40 w-full object-cover"
+            />
+            <h4 className="font-semibold text-lg mb-2">Buzo Adidas</h4>
+            <p className="text-gray-600 mb-4">$65.00</p>
+            <button className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+              Agregar al carrito
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* Footer */}

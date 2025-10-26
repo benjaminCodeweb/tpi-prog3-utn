@@ -5,65 +5,64 @@ import { themeContext } from '../../services/ThemeProvider';
 
 type Props = {}
 
-function Register({}: Props) {
-    const[username, setUsername] = useState('');
-    const[email, setEmail] = useState('');
-    const[password, setPassword] = useState('');
-    const[passwordConfirm, setPasswordConfirm] = useState('');
-    const[rol, setRol] = useState('');
-    const[error, setError] = useState('');
-    const navigate = useNavigate();
-    const {theme} = useContext(themeContext);
-    const validations = [
-      {label: 'Minimo 8 caracteres', valid: password.length >= 8},
-      {label: 'Al menos una maysucula', valid: /[A-Z]/.test(password)},
-      {label: 'Al menos un caracter especial', valid: /[!@#$%^&*(),.?":{}|<>]/.test(password)},
-      {label: 'Al menos un numero', valid: /\d/.test(password)},
-    ]
-    
-
-    const handleSubmit  = async(e: React.FormEvent) => {
-        e.preventDefault();
-        if(password !== passwordConfirm) {
-          alert("Las contrasenas no coincciden");
-          return;
-        }
-       
-        try {
-
-            const res = await axios.post('http://localhost:3000/api/users/register', {
-              username,
-              email,
-              password,
-              rol   
-            });      
+function Register({ }: Props) {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [rol, setRol] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { theme } = useContext(themeContext);
+  const validations = [
+    { label: 'Minimo 8 caracteres', valid: password.length >= 8 },
+    { label: 'Al menos una maysucula', valid: /[A-Z]/.test(password) },
+    { label: 'Al menos un caracter especial', valid: /[!@#$%^&*(),.?":{}|<>]/.test(password) },
+    { label: 'Al menos un numero', valid: /\d/.test(password) },
+  ]
 
 
-            if(res.data.success === true){
-  
-            alert('Usuario creado con exito');
-            navigate('/login');
-            }
-            
-    }catch(err:any){
-        if(axios.isAxiosError(err) && err.response) {
-          setError(err.response.data.message)
-        }
-        console.error('error al mandar el user', err);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== passwordConfirm) {
+      alert("Las contrasenas no coincciden");
+      return;
     }
-            setUsername('');
-            setEmail('');
-            setPassword('');
-            setRol('');
-            
-           
-}
 
-    return (
+    try {
+
+      const res = await axios.post('http://localhost:3000/api/users/register', {
+        username,
+        email,
+        password,
+        rol
+      });
+
+
+      if (res.data.success === true) {
+
+        alert('Usuario creado con exito');
+        navigate('/login');
+      }
+
+    } catch (err: any) {
+      if (axios.isAxiosError(err) && err.response) {
+        setError(err.response.data.message)
+      }
+      console.error('error al mandar el user', err);
+    }
+    setUsername('');
+    setEmail('');
+    setPassword('');
+    setRol('');
+
+
+  }
+
+  return (
     <div
-      className={`min-h-screen flex items-center justify-center px-4 transition-theme duration-300 ${
-        theme === "dark" ? "dark" : ""
-      }`}
+      className={`min-h-screen flex items-center justify-center px-4 transition-theme duration-300 ${theme === "dark" ? "dark" : ""
+        }`}
       style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
     >
       <div
@@ -143,9 +142,8 @@ function Register({}: Props) {
                 {validations.map((v) => (
                   <div
                     key={v.label}
-                    className={`flex items-center gap-2 ${
-                      v.valid ? "text-green-500" : "text-gray-500 dark:text-gray-400"
-                    }`}
+                    className={`flex items-center gap-2 ${v.valid ? "text-green-500" : "text-gray-500 dark:text-gray-400"
+                      }`}
                   >
                     <span>{v.valid ? "✅" : "⚪"}</span>
                     {v.label}

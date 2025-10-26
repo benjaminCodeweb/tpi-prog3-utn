@@ -7,88 +7,89 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from '../../redux/store.ts';
 import { addToCart, clearCart, removeFromCart } from "../../redux/CounterSlice";
 import { DeleteIcon } from "../assetsComponents/Icons.tsx";
-import {motion }from 'framer-motion'
+import { motion } from 'framer-motion'
 import { themeContext } from "../../services/ThemeProvider.tsx";
 type ShopProps = {
- 
-  
- 
+
+
+
   onLogout: () => void;
 
 }
-function Shop({onLogout}: ShopProps){
-    const [products, setProducts] = useState<Product[]>([]);
-    const[cartVisible, setCartVisible] = useState(false);
-    const token = localStorage.getItem('token');
-    const[addToast, setAddToast] = useState(false);
-    const carts = useSelector((state: RootState) => state.cart.items )
-    const dispatch = useDispatch();
-    const total = carts.reduce((sum, p) => sum + (Number(p.precio) || 0), 0);
-    const {theme} = useContext(themeContext);
-    
+function Shop({ onLogout }: ShopProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [cartVisible, setCartVisible] = useState(false);
+  const token = localStorage.getItem('token');
+  const [addToast, setAddToast] = useState(false);
+  const carts = useSelector((state: RootState) => state.cart.items)
+  const dispatch = useDispatch();
+  const total = carts.reduce((sum, p) => sum + (Number(p.precio) || 0), 0);
+  const { theme } = useContext(themeContext);
 
-    const navigate = useNavigate();
 
-    const fetchProducts = async() => {
-      try {
-        const response = await axios.get(`http://localhost:3000/api/products/general`, {
-          headers: {Authorization: `Bearer ${token}`}
-        });
-        setProducts(response.data)
-      }catch(err){
-        console.error('error al hacer el fetch')
+  const navigate = useNavigate();
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/products/general`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setProducts(response.data)
+    } catch (err) {
+      console.error('error al hacer el fetch')
+    }
+  };
+  const handleCart = () => {
+    setCartVisible(!cartVisible)
+  }
+
+  const handleBuy = async () => {
+    dispatch(clearCart())
+    await axios.post('http://localhost:3000/api/products/comprar',
+      { products: carts }, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    };
-    const handleCart = () => {
-      setCartVisible(!cartVisible)
     }
-    
-    const handleBuy = async() => {
-      dispatch(clearCart())
-        await axios.post('http://localhost:3000/api/products/comprar',
-          {products: carts}, {headers: {
-            Authorization: `Bearer ${token}`
-          }}
-        );
-       
-        await fetchProducts();
-        
-    };
+    );
 
-    const handleAddCart = (product: Product) => {
-      dispatch(addToCart(product));
-      setAddToast(true);
+    await fetchProducts();
 
-      setTimeout(() => setAddToast(false), 2500)
-    }
+  };
 
-    const handleDeleteCart = async(product: Product) => {
-      dispatch(removeFromCart(product.id))
+  const handleAddCart = (product: Product) => {
+    dispatch(addToCart(product));
+    setAddToast(true);
 
-        }
-   
+    setTimeout(() => setAddToast(false), 2500)
+  }
 
-    useEffect(() => {
-        fetchProducts();
-    },[]);
+  const handleDeleteCart =  (id: number) => {
+    dispatch(removeFromCart(id))
 
-    const handleLogout = () => {
+  }
 
-      onLogout();
-    };
 
-    const handleStats = () => {
-      navigate('/stats-bullers');
-    };
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-    const availableProducts = products.filter((p) => p.estado === 'Disponible')
-    
+  const handleLogout = () => {
 
-     return (
+    onLogout();
+  };
+
+  const handleStats = () => {
+    navigate('/stats-bullers');
+  };
+
+  const availableProducts = products.filter((p) => p.estado === 'Disponible')
+
+
+  return (
     <div
-      className={`min-h-screen flex flex-col transition-theme duration-300 ${
-        theme === "dark" ? "dark" : ""
-      }`}
+      className={`min-h-screen flex flex-col transition-theme duration-300 ${theme === "dark" ? "dark" : ""
+        }`}
       style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
     >
       {/* 🔹 Navbar */}
@@ -202,7 +203,7 @@ function Shop({onLogout}: ShopProps){
                   <span className="font-bold text-blue-600 dark:text-blue-400">
                     ${p.precio}
                   </span>
-                  <button onClick={() => handleDeleteCart(p)}>
+                  <button onClick={() => handleDeleteCart(p.id)}>
                     <DeleteIcon />
                   </button>
                 </div>
