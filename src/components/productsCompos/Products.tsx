@@ -10,18 +10,19 @@ export type ProductsProps = {
   onDelete: (id: number) => void;
 
   onStartEdit: (product: Product) => void;
+  onSearch: () => string;
 
 
 }
-function Products({ products, onDelete, onStartEdit }: ProductsProps) {
+function Products({ products, onDelete, onStartEdit, onSearch }: ProductsProps) {
   const [search] = useState<string>('');
   const { theme } = useContext(themeContext)
 
 
   const filtredProducts =
-    search.length > 0
+    onSearch().length > 0
       ? products.filter((p) =>
-        p.nombre.toLowerCase().includes(search.toLowerCase()
+        p.nombre.toLowerCase().includes(onSearch().toLowerCase()
         ))
 
       : products;

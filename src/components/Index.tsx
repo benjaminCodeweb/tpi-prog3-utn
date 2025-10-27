@@ -21,6 +21,7 @@ export type ProductProps = {
 function Index({ products, onLogout, onRefresh, onStats, onDelete, onDeleteToast, onEditToast, onEdit }: ProductProps) {
   const [add, setAdd] = useState(false);
   const [edit, setEdit] = useState<Product | null>(null);
+  const [search, setSearch] = useState<string>('')
   const { theme, toggleTheme } = useContext(themeContext);
 
   const handleAdd = () => {
@@ -53,6 +54,8 @@ function Index({ products, onLogout, onRefresh, onStats, onDelete, onDeleteToast
     setEdit(product)   // 👉 guarda producto seleccionado
     setAdd(true)               // 👉 abre formulario
   }
+
+
 
 
   return (
@@ -90,8 +93,21 @@ function Index({ products, onLogout, onRefresh, onStats, onDelete, onDeleteToast
 
       {/* Main */}
       <main className="flex-1 px-8 py-10 max-w-6xl mx-auto w-full">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar producto..."
+          className="w-full max-w-sm px-4 py-2.5 rounded-lg border border-gray-200 bg-white 
+             text-gray-700 text-sm placeholder-gray-400 shadow-sm 
+             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+             transition-all duration-200"
+        /> 
+         
+        
         {/* Header sección */}
         <div className="flex items-center justify-between mb-6">
+
           <h2 className="text-2xl font-bold text-gray-800 transition-theme">
             📦 Mis productos
           </h2>
@@ -101,6 +117,7 @@ function Index({ products, onLogout, onRefresh, onStats, onDelete, onDeleteToast
           >
             ➕ Agregar
           </button>
+
         </div>
 
         <NewProductModal
@@ -131,7 +148,7 @@ function Index({ products, onLogout, onRefresh, onStats, onDelete, onDeleteToast
 
         {/* Listado de productos */}
         <section>
-          <Products products={products} onDelete={onDelete} onStartEdit={handleStartEdit} />
+          <Products products={products} onDelete={onDelete} onSearch={() => search} onStartEdit={handleStartEdit} />
         </section>
       </main>
 
